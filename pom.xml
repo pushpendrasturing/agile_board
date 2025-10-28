@@ -14,8 +14,8 @@
         <lombok.version>1.18.32</lombok.version>
         <jjwt.version>0.11.5</jjwt.version>
     </properties>
-    <groupId>com.example</groupId>
-    <artifactId>agileboard</artifactId>
+    <groupId>com.agile</groupId>
+    <artifactId>board</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>jira</name>
     <description>Agile board h2 project</description>
