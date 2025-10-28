@@ -27,4 +27,3 @@ public class UserService {
         return users.save(u);
     }
 }
-
