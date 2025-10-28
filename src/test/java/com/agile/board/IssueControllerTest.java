@@ -14,20 +14,7 @@ public class IssueControllerTest extends BaseIntegrationTest {
 
     @BeforeAll
     void setupOnce() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
-                        .contentType(JSON)
-                        .content("{\"username\":\"iu\",\"email\":\"iu@x.com\",\"password\":\"p\"}"))
-                .andReturn(); // don't assert status
-
-        MvcResult res = mvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
-                        .contentType(JSON)
-                        .content("{\"username\":\"iu\",\"password\":\"p\"}"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        tk = res.getResponse().getContentAsString()
-                .replaceAll(".*:\\\"(.*)\\\".*", "$1");
-
+        tk = getToken();
         MvcResult resp = mvc.perform(MockMvcRequestBuilders.post("/api/projects")
                         .header("Authorization", "Bearer " + tk)
                         .contentType(JSON)

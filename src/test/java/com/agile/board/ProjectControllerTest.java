@@ -10,18 +10,7 @@ public class ProjectControllerTest extends BaseIntegrationTest {
 
     @Test
     void createAndList() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
-                        .contentType(JSON)
-                        .content("{\"username\":\"u21\",\"email\":\"u2@x.com\",\"password\":\"p1\"}"))
-                .andExpect(status().isOk());
-
-        var res = mvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
-                        .contentType(JSON)
-                        .content("{\"username\":\"u21\",\"password\":\"p1\"}"))
-                .andReturn();
-
-        String token = res.getResponse().getContentAsString()
-                .replaceAll(".*:\\\"(.*)\\\".*", "$1");
+        String token = getToken();
 
         mvc.perform(MockMvcRequestBuilders.post("/api/projects")
                         .header("Authorization", "Bearer " + token)
