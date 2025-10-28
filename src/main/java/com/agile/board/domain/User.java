@@ -23,6 +23,8 @@ public class User {
     @Email @NotBlank
     private String email;
 
+    private String name;
+
     private String role; // USER, ADMIN
 
     @ManyToMany(mappedBy = "members")
