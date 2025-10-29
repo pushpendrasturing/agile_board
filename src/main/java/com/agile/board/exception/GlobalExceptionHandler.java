@@ -48,12 +48,6 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "BAD_PARAMETERS", ex.getMessage(), req, null);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
-        // Last-resort catcher (avoid leaking stack traces to clients)
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "Unexpected error", req, null);
-    }
-
     private ResponseEntity<ApiError> build(HttpStatus status, String code, String message,
                                            HttpServletRequest req, Map<String, String> details) {
         ApiError body = new ApiError(
