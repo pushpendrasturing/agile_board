@@ -1,5 +1,6 @@
 package com.agile.board.service;
 
+import com.agile.board.domain.Role;
 import com.agile.board.domain.User;
 import com.agile.board.repo.UserRepository;
 import io.jsonwebtoken.Jwts;
@@ -28,6 +29,7 @@ public class AuthService {
                 .email(email)
                 .passwordHash(encoder.encode(password))
                 .role("USER")
+                .tokenVersion(0)
                 .build();
         return users.save(u);
     }
@@ -38,11 +40,16 @@ public class AuthService {
         if (!encoder.matches(password, u.getPasswordHash()))
             throw new IllegalArgumentException("bad creds");
 
+        var role = Role.from(u.getRole());
         Instant now = Instant.now();
         return Jwts.builder()
                 .setSubject(u.getUsername())
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(3600)))
+                // embed role + token version (and optionally perms)
+                .claim("role", role.name())
+                .claim("ver", u.getTokenVersion())
+                .claim("perms", role.permissions())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -45,24 +45,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .getBody();
 
                 String username = claims.getSubject();
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    users.findByUsername(username).ifPresent(dbUser -> {
-                        Role role = Role.from(dbUser.getRole());
+                Integer tokenVer = claims.get("ver", Integer.class);
+                String roleStr = claims.get("role", String.class);
+                List<String> perms = claims.get("perms", List.class);
+
+                if (username != null && tokenVer != null
+                        && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                    // Minimal DB hit ONLY to validate tokenVersion (invalidate old tokens on role change)
+                    var current = users.findByUsername(username).orElse(null);
+                    if (current != null && current.getTokenVersion() == tokenVer) {
+                        // Build authorities from token claims (self-contained role/permissions)
                         List<SimpleGrantedAuthority> auths = new ArrayList<>();
-                        // Role-based authority (for hasRole)
+                        Role role = Role.from(roleStr);
                         auths.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
-                        // Permission authorities (for hasAuthority)
-                        role.permissions().forEach(p -> auths.add(new SimpleGrantedAuthority(p)));
+                        if (perms != null) perms.forEach(p -> auths.add(new SimpleGrantedAuthority(p)));
 
-                        UserDetails ud = User.withUsername(username)
-                                .password("")
-                                .authorities(auths)
-                                .build();
-
+                        UserDetails ud = User.withUsername(username).password("").authorities(auths).build();
                         var authTok = new UsernamePasswordAuthenticationToken(ud, null, ud.getAuthorities());
                         authTok.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authTok);
-                    });
+                    }
                 }
             } catch (Exception ignored) {
             }

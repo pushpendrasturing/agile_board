@@ -25,7 +25,12 @@ public class User {
 
     private String name;
 
-    private String role; // USER, ADMIN
+    // USER, ADMIN
+    private String role;
+
+    // Used to invalidate previously issued tokens when role/privilege changes
+    @Column(nullable = false)
+    private int tokenVersion = 0;
 
     @ManyToMany(mappedBy = "members")
     private Set<Project> projects;
