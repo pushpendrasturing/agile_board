@@ -6,6 +6,7 @@ import com.agile.board.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class ProjectController {
         return ResponseEntity.ok(views);
     }
 
+    @PreAuthorize("hasAuthority('PROJECT_CREATE')")
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody ProjectCreate req) {
         var created = service.create(req.key(), req.name());
