@@ -22,6 +22,10 @@ public class Project {
 
     private Instant createdAt;
 
+    /** Soft delete marker */
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @ManyToMany
     @JoinTable(name = "project_members",
         joinColumns = @JoinColumn(name = "project_id"),
