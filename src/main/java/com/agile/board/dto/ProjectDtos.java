@@ -6,4 +6,5 @@ import java.util.Set;
 public class ProjectDtos {
     public record ProjectCreate(@NotBlank String key, @NotBlank String name) {}
     public record ProjectView(Long id, String key, String name, Set<Long> memberIds) {}
+    public record ProjectRename(@NotBlank String name) {}
 }

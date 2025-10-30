@@ -40,6 +40,13 @@ public class ProjectController {
         return ResponseEntity.ok(mapper.toView(p));
     }
 
+    @PreAuthorize("hasAuthority('PROJECT_EDIT')")
+    @PatchMapping("/{id}/rename")
+    public ResponseEntity<?> rename(@PathVariable Long id, @Valid @RequestBody ProjectRename req) {
+        var updated = service.rename(id, req.name());
+        return ResponseEntity.ok(mapper.toView(updated));
+    }
+
     /** Soft delete (requires PROJECT_EDIT) */
     @PreAuthorize("hasAuthority('PROJECT_EDIT')")
     @DeleteMapping("/{id}")
