@@ -42,4 +42,13 @@ public class ProjectService {
         int updated = projects.restoreById(id);
         if (updated == 0) throw new IllegalArgumentException("project not found");
     }
+
+    /** Update project name (to exercise @LastModified* fields) */
+    @Transactional
+    public Project rename(Long id, String newName) {
+        Project p = projects.findById(id).orElseThrow();
+        if (p.isDeleted()) throw new IllegalArgumentException("project not found");
+        p.setName(newName);
+        return projects.save(p);
+    }
 }
