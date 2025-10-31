@@ -8,12 +8,15 @@ import com.agile.board.domain.User;
 import com.agile.board.repo.IssueRepository;
 import com.agile.board.repo.ProjectRepository;
 import com.agile.board.repo.UserRepository;
+import com.agile.board.search.IssueSearchSpec;
 import com.agile.board.workflow.IssueTransitionPolicy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service @RequiredArgsConstructor
 public class IssueService {
@@ -31,6 +34,11 @@ public class IssueService {
                 .project(project).assignee(assignee)
                 .createdAt(Instant.now()).updatedAt(Instant.now()).build();
         return issues.save(i);
+    }
+
+    public List<Issue> search(IssueStatus status, IssuePriority priority, String assignee) {
+        Specification<Issue> spec = IssueSearchSpec.build(status, priority, assignee);
+        return issues.findAll(spec);
     }
 
     /** Transition issue status with policy validation */
