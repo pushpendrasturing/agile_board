@@ -2,6 +2,7 @@ package com.agile.board.web;
 
 import com.agile.board.domain.Issue;
 import com.agile.board.dto.IssueDtos.*;
+import com.agile.board.dto.IssueUpdateDtos;
 import com.agile.board.mapper.Mappers;
 import com.agile.board.service.IssueService;
 import jakarta.validation.Valid;
@@ -18,5 +19,11 @@ public class IssueController {
     public ResponseEntity<IssueView> create(@Valid @RequestBody IssueCreate req) {
         Issue i = service.create(req.title(), req.description(), req.priority(), req.projectId(), req.assigneeId());
         return ResponseEntity.ok(mapper.toView(i));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<IssueView> updateStatus(@PathVariable Long id, @Valid @RequestBody IssueUpdateDtos.UpdateStatus req) {
+        Issue updated = service.transitionStatus(id, req.status());
+        return ResponseEntity.ok(mapper.toView(updated));
     }
 }
